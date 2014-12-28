@@ -8,38 +8,81 @@
   <script src="./bower_components/angularjs/angular.min.js"></script>
   <script src="./dist/scripts/uzDropdown.js"></script>
 
+  <style>
+    table {
+      width: 90%;
+      border-top: 1px solid #e5eff8;
+      border-right: 1px solid #e5eff8;
+      margin: 1em auto;
+      border-collapse: collapse;
+    }
+    tr.odd td {
+      background: #f7fbff
+    }
+    td {
+      color: #678197;
+      border-bottom: 1px solid #e5eff8;
+      border-left: 1px solid #e5eff8;
+      padding: .3em 1em;
+      text-align: center;
+    }
+    th {
+      font-weight: normal;
+      color: #678197;
+      text-align: left;
+      border-bottom: 1px solid #e5eff8;
+      border-left: 1px solid #e5eff8;
+      padding: .3em 1em;
+    }
+  </style>
+
   <script>
     angular
-    .module('myApp', ['uz'])
-    .controller("MainCtrl", function($scope) {
-      $scope.items = [ "one", "two", "three", "four" ];
-      $scope.selected = [];
-      // $scope.itemFilter = function(item) {
-      //   return item.match('o');
-      // }
-    });
+      .module('myApp', ['uz'])
+      .controller("MainCtrl", function($scope) {
+        $scope.items = ["one", "two", "three", "four"];
+        $scope.selected = [];
+        // $scope.itemFilter = function(item) {
+        //   return item.match('o');
+        // }
+      });
   </script>
 
 </head>
-  <body ng-app="myApp">
-    <section ng-controller='MainCtrl'>
 
-      <h1>uzDropdown demo</h1>
+<body ng-app="myApp">
+  <section ng-controller='MainCtrl'>
 
-      <pre><code>
-        items:             {{items}}
-        selected:          {{selected}}
-        format:            item
-        selected-format:   selected[0]
-      </code></pre>
+    <h1>uzDropdown demo</h1>
 
-      <uz-dropdown items='items'
-                   selected='selected'
-                   format='item'
-                   filter="itemFilter"
-                   selected-format='selected[0]'>
-      </uz-dropdown>
+    <table>
+      <tr>
+        <td>items</td>
+        <td>{{items}}</td>
+      </tr>
+      <tr>
+        <td>selected</td>
+        <td>{{selected}}</td>
+      </tr>
+      <tr>
+        <td>format</td>
+        <td>item</td>
+      </tr>
+      <tr>
+        <td>selected-format</td>
+        <td>selected[0]</td>
+      </tr>
+    </table>
 
-    </section>
-  </body>
+    <uz-dropdown
+      items='items'
+      selected='selected'
+      filter="itemFilter"
+      format='item'
+      selected-format='selected[0]'>
+    </uz-dropdown>
+
+  </section>
+</body>
+
 </html>
