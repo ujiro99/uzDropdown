@@ -90,6 +90,7 @@ module.exports = (grunt) ->
     bower:
       install:
         options:
+          targetDir: 'bower_components/'
           install: true
           verbose: true
           cleanTargetDir: false
