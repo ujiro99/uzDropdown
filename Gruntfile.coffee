@@ -90,7 +90,6 @@ module.exports = (grunt) ->
     bower:
       install:
         options:
-          targetDir: './'
           install: true
           verbose: true
           cleanTargetDir: false
