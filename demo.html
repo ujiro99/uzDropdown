@@ -1,0 +1,45 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Dropdown Tests</title>
+  <link rel="stylesheet" href="./dist/css/dropdown.css">
+
+  <script src="http://localhost:35729/livereload.js"></script>
+  <script src="./bower_components/angularjs/angular.min.js"></script>
+  <script src="./dist/scripts/uzDropdown.js"></script>
+
+  <script>
+    angular
+    .module('myApp', ['uz'])
+    .controller("MainCtrl", function($scope) {
+      $scope.items = [ "one", "two", "three", "four" ];
+      $scope.selected = [];
+      // $scope.itemFilter = function(item) {
+      //   return item.match('o');
+      // }
+    });
+  </script>
+
+</head>
+  <body ng-app="myApp">
+    <section ng-controller='MainCtrl'>
+
+      <h1>uzDropdown demo</h1>
+
+      <pre><code>
+        items:             {{items}}
+        selected:          {{selected}}
+        format:            item
+        selected-format:   selected[0]
+      </code></pre>
+
+      <uz-dropdown items='items'
+                   selected='selected'
+                   format='item'
+                   filter="itemFilter"
+                   selected-format='selected[0]'>
+      </uz-dropdown>
+
+    </section>
+  </body>
+</html>
