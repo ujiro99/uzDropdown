@@ -2,22 +2,19 @@ angular.module('uz', [])
   .directive 'uzDropdown', ($timeout) ->
     return {
       restrict: 'E'
-      template: "<div class='dropdown'>" +
-                "<input tabindex='0'" +
-                       "class='dropdown-text dropdown-toggle'" +
-                       "ng-model='keyword'" +
-                       "ng-keydown='onKeydown($event.keyCode)'></input>" +
-                "<div class='dropdown-box'><ul class='dropdown-content'>" +
-                "<li ng-repeat='item in result = (items | filter:itemFilter)'" +
-                    "ng-click='selected[0] = item' " +
-                    "ng-class='{active: item === selected[0]}'>" +
-                "<a><span>{{$eval($parent.format)}}</span></a>" +
-                "</li>" +
-                "</ul></div>"
-                # "format: <span>{{format}}</span>" +
-                # "keyword: <span>{{keyword}}</span>"
-                # "result: <pre><code>{{result}}</code></pre>" +
-                # "selected: <pre><code>{{selected[0]}}</code></pre>"
+      template:
+        # "result: <pre><code>{{result}}</code></pre>" + # for debug
+        "<div class='dropdown'>" +
+        "<input tabindex='0'" +
+               "class='dropdown-text dropdown-toggle'" +
+               "ng-model='keyword'" +
+               "ng-keydown='onKeydown($event.keyCode)'></input>" +
+        "<div class='dropdown-box'><ul class='dropdown-content'>" +
+        "<li ng-repeat='item in result = (items | filter:itemFilter)'" +
+            "ng-click='onClickItem(item)'" +
+            "ng-class='{active: item === selected[0]}'>" +
+        "<a><span>{{$eval($parent.format)}}</span></a>" +
+        "</li></ul></div>"
       scope:
         items: '='
         selected: '='
@@ -28,16 +25,24 @@ angular.module('uz', [])
         KEY_DOWN    = 40
 
         selectIndex = 0
+        inputElem = element[0].querySelector(".dropdown-toggle")
 
         scope.format = attrs.format or "item.text"
         scope.keyword = ''
         scope.result = []
         scope.selectedFormat = attrs.selectedFormat or "selected[0].text"
+
         scope.itemFilter = (item) ->
           return eval(scope.format).match(scope.keyword)
+
+        scope.onClickItem = (item) ->
+          scope.selected[0] = item
+          scope.keyword = eval("scope." + scope.selectedFormat)
+
         scope.onKeydown = (keycode) ->
           if keycode is KEY_ENTER
-            $timeout(() -> angular.element(element[0].querySelector(".dropdown-toggle"))[0].blur())
+            scope.keyword = eval("scope." + scope.selectedFormat)
+            selected = scope.result[selectIndex]
           else if keycode is KEY_DOWN then selectIndex++
           else if keycode is KEY_UP then selectIndex--
 
@@ -45,9 +50,11 @@ angular.module('uz', [])
             selectIndex = 0
           if selectIndex >= scope.result.length
             selectIndex = scope.result.length - 1
+          selected = scope.result[selectIndex]
+          $timeout(() -> scope.selected[0] = selected)
 
-          $timeout(() -> scope.selected[0] = scope.result[selectIndex])
-
-        element[0].querySelector(".dropdown-toggle").onblur = () ->
-          scope.keyword = eval("scope." + scope.selectedFormat)
+        scope.$watch 'result.length', () ->
+          selectIndex = 0
+          selected = scope.result[selectIndex]
+          $timeout(() -> scope.selected[0] = selected)
     }
