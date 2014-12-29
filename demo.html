@@ -12,6 +12,7 @@
   <style>
     table {
       width: 90%;
+      font-size: smaller;
       border-top: 1px solid #e5eff8;
       border-right: 1px solid #e5eff8;
       margin: 1em auto;
@@ -35,14 +36,45 @@
       border-left: 1px solid #e5eff8;
       padding: .3em 1em;
     }
+    .patterns {
+      margin: 4em 2em 0 1em;
+    }
+    .h2 {
+      border-bottom: 1px solid silver;
+    }
   </style>
 
   <script>
     angular
       .module('myApp', ['uz'])
       .controller("MainCtrl", function($scope) {
+        // basic
         $scope.items = ["one", "two", "three", "four", "\\test", "//test", "[]\\促/ ,+\";^-()|" ];
         $scope.selected = [];
+
+        // object
+        $scope.items_obj = [
+          {id: 1, name: "one"},
+          {id: 2, name: "two"},
+          {id: 3, name: "Three"}
+        ];
+        $scope.selected_obj = [];
+
+        // object in object
+        $scope.items_obj_obj = [
+          {id: 1, param: {name: "one",   val: 123}},
+          {id: 2, param: {name: "two",   val: 456}},
+          {id: 3, param: {name: "Three", val: 789}}
+        ];
+        $scope.selected_obj_obj = [];
+
+        // many object (1000)
+        $scope.items_1000 = [];
+        for(var i = 0; i < 1000; i++) {
+          $scope.items_1000.push({id: i, param: {name: "n_" + i}})
+        }
+        $scope.selected_1000 = [];
+
       });
   </script>
 
@@ -53,32 +85,105 @@
 
     <h1>uzDropdown demo</h1>
 
-    <table>
-      <tr>
-        <td>items</td>
-        <td>{{items}}</td>
-      </tr>
-      <tr>
-        <td>selected</td>
-        <td>{{selected}}</td>
-      </tr>
-      <tr>
-        <td>format</td>
-        <td>item</td>
-      </tr>
-      <tr>
-        <td>selected-format</td>
-        <td>selected[0]</td>
-      </tr>
-    </table>
+    <section class="patterns">
+      <h2>basic</h2>
+      <table>
+        <tr>
+          <td>items</td>
+          <td>{{items}}</td>
+        </tr>
+        <tr>
+          <td>selected</td>
+          <td>{{selected}}</td>
+        </tr>
+        <tr>
+          <td>format</td>
+          <td>""</td>
+        </tr>
+      </table>
 
-    <uz-dropdown
-      items='items'
-      selected='selected'
-      format='item'
-      placeholder='input keyword ...'
-      selected-format='selected[0]'>
-    </uz-dropdown>
+      <uz-dropdown
+        items='items'
+        selected='selected'
+        format=''
+        placeholder='input keyword ...'>
+      </uz-dropdown>
+    </section>
+
+    <section class="patterns">
+      <h2>Object</h2>
+      <table>
+        <tr>
+          <td>items</td>
+          <td>{{items_obj}}</td>
+        </tr>
+        <tr>
+          <td>selected</td>
+          <td>{{selected_obj}}</td>
+        </tr>
+        <tr>
+          <td>format</td>
+          <td>"{id} {name}"</td>
+        </tr>
+      </table>
+
+      <uz-dropdown
+        items='items_obj'
+        selected='selected_obj'
+        format='{id} {name}'
+        placeholder='input keyword ...'>
+      </uz-dropdown>
+    </section>
+
+    <section class="patterns">
+      <h2>Object in Object</h2>
+      <table>
+        <tr>
+          <td>items</td>
+          <td>{{items_obj_obj}}</td>
+        </tr>
+        <tr>
+          <td>selected</td>
+          <td>{{selected_obj_obj}}</td>
+        </tr>
+        <tr>
+          <td>format</td>
+          <td>"{id} {param.name} {param.val}"</td>
+        </tr>
+      </table>
+
+      <uz-dropdown
+        items='items_obj_obj'
+        selected='selected_obj_obj'
+        format='{id} {param.name} {param.val}'
+        placeholder='input keyword ...'>
+      </uz-dropdown>
+    </section>
+
+    <section class="patterns">
+      <h2>1000 Objects</h2>
+      <table>
+        <tr>
+          <td>items</td>
+          <td>... (1000 items)</td>
+        </tr>
+        <tr>
+          <td>selected</td>
+          <td>{{selected_1000}}</td>
+        </tr>
+        <tr>
+          <td>format</td>
+          <td>"{id} {param.name}"</td>
+        </tr>
+      </table>
+
+      <uz-dropdown
+        items='items_1000'
+        selected='selected_1000'
+        format='{id} {param.name}'
+        placeholder='input keyword ...'>
+      </uz-dropdown>
+    </section>
 
   </section>
 </body>
