@@ -1,48 +1,95 @@
 angular.module('uz', []).directive('uzDropdown', function($timeout) {
   return {
     restrict: 'E',
-    template: "<div class='dropdown'>" + "<input tabindex='0'" + "class='dropdown-text dropdown-toggle'" + "ng-model='keyword'" + "ng-keydown='onKeydown($event.keyCode)'></input>" + "<div class='dropdown-box'><ul class='dropdown-content'>" + "<li ng-repeat='item in result = (items | filter:itemFilter)'" + "ng-click='selected[0] = item' " + "ng-class='{active: item === selected[0]}'>" + "<a><span>{{$eval($parent.format)}}</span></a>" + "</li>" + "</ul></div>",
+    template: "<div class='dropdown'>" + "<input tabindex='0'" + "class='dropdown-text dropdown-toggle'" + "ng-model='keyword'" + "ng-keydown='onKeydown($event.keyCode)'></input>" + "<div class='dropdown-box'><ul class='dropdown-content'>" + "<li ng-repeat='item in result = (items | filter:itemFilter)'" + "ng-click='onClickItem(item)'" + "ng-class='{active: item === selected[0]}'>" + "<a><span>{{$eval($parent.format)}}</span></a>" + "</li></ul></div>",
     scope: {
       items: '=',
-      selected: '=',
-      itemFilter: '=filter'
+      selected: '='
     },
     link: function(scope, element, attrs) {
-      var KEY_DOWN, KEY_ENTER, KEY_UP, selectIndex;
+      var KEY_DOWN, KEY_ENTER, KEY_UP, SPLIT_SPACE, escapeRegExp, _searchRegex, _selectIndex;
       KEY_ENTER = 13;
       KEY_UP = 38;
       KEY_DOWN = 40;
-      selectIndex = 0;
-      scope.format = attrs.format || "item.text";
+      SPLIT_SPACE = ' ';
+      _selectIndex = 0;
+      _searchRegex = {};
+      escapeRegExp = function(str) {
+        return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+      };
       scope.keyword = '';
       scope.result = [];
+      scope.format = attrs.format || "item.text";
       scope.selectedFormat = attrs.selectedFormat || "selected[0].text";
+      /*
+       filtering list
+      */
+
       scope.itemFilter = function(item) {
-        return eval(scope.format).match(scope.keyword);
+        var isMatch, k, keywords, reg, target, _i, _j, _len, _len1, _ref;
+        if (!_searchRegex[scope.keyword]) {
+          _searchRegex = {};
+          _searchRegex[scope.keyword] = [];
+          keywords = scope.keyword.split(SPLIT_SPACE);
+          for (_i = 0, _len = keywords.length; _i < _len; _i++) {
+            k = keywords[_i];
+            _searchRegex[scope.keyword].push(new RegExp(escapeRegExp(k), ["i"]));
+          }
+        }
+        target = eval(scope.format);
+        isMatch = true;
+        _ref = _searchRegex[scope.keyword];
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          reg = _ref[_j];
+          isMatch &= reg.test(target);
+        }
+        return isMatch;
       };
-      scope.onKeydown = function(keycode) {
-        if (keycode === KEY_ENTER) {
-          $timeout(function() {
-            return angular.element(element[0].querySelector(".dropdown-toggle"))[0].blur();
-          });
-        } else if (keycode === KEY_DOWN) {
-          selectIndex++;
-        } else if (keycode === KEY_UP) {
-          selectIndex--;
-        }
-        if (selectIndex < 0) {
-          selectIndex = 0;
-        }
-        if (selectIndex >= scope.result.length) {
-          selectIndex = scope.result.length - 1;
-        }
-        return $timeout(function() {
-          return scope.selected[0] = scope.result[selectIndex];
-        });
-      };
-      return element[0].querySelector(".dropdown-toggle").onblur = function() {
+      /*
+       onClick contents, select item and update input field.
+      */
+
+      scope.onClickItem = function(item) {
+        scope.selected[0] = item;
         return scope.keyword = eval("scope." + scope.selectedFormat);
       };
+      /*
+       Keydown event on input fileld.
+        - select item (up and down).
+        - confirm item selection (enter).
+      */
+
+      scope.onKeydown = function(keycode) {
+        var tmpSelected;
+        if (keycode === KEY_ENTER) {
+          scope.keyword = eval("scope." + scope.selectedFormat);
+          tmpSelected = scope.result[_selectIndex];
+        } else if (keycode === KEY_DOWN) {
+          _selectIndex++;
+        } else if (keycode === KEY_UP) {
+          _selectIndex--;
+        }
+        if (_selectIndex < 0) {
+          _selectIndex = 0;
+        }
+        if (_selectIndex >= scope.result.length) {
+          _selectIndex = scope.result.length - 1;
+        }
+        tmpSelected = scope.result[_selectIndex];
+        return $timeout(function() {
+          return scope.selected[0] = tmpSelected;
+        });
+      };
+      /*
+       Update selection if result changed.
+      */
+
+      return scope.$watch('result.length', function() {
+        _selectIndex = 0;
+        return $timeout(function() {
+          return scope.selected[0] = scope.result[_selectIndex];
+        });
+      });
     }
   };
 });
