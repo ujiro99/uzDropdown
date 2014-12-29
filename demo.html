@@ -43,9 +43,6 @@
       .controller("MainCtrl", function($scope) {
         $scope.items = ["one", "two", "three", "four", "\\test", "//test", "[]\\¥/ ,+\";^-()|" ];
         $scope.selected = [];
-        // $scope.itemFilter = function(item) {
-        //   return item.match('o');
-        // }
       });
   </script>
 
@@ -78,7 +75,6 @@
     <uz-dropdown
       items='items'
       selected='selected'
-      filter="itemFilter"
       format='item'
       selected-format='selected[0]'>
     </uz-dropdown>
