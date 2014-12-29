@@ -1,6 +1,6 @@
 {
   "name": "uzDropdown",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://github.com/ujiro99/uzDropdown",
   "description": "simple dropdown menu as a angularjs directive.",
   "main": "dist/scripts/uzDropdown.js",
