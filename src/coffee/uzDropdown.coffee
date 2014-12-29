@@ -9,6 +9,7 @@ angular.module('uz', [])
         "<input tabindex='0'" +
                "class='dropdown-text dropdown-toggle'" +
                "ng-model='keyword'" +
+               "placeholder='{{placeholder}}'" +
                "ng-keydown='onKeydown($event.keyCode)'></input>" +
         "<div class='dropdown-box'><ul class='dropdown-content'>" +
         "<li ng-repeat='item in result = (items | filter:itemFilter)'" +
@@ -19,6 +20,7 @@ angular.module('uz', [])
       scope:
         items: '='
         selected: '='
+        placeholder: '@'
       link: (scope, element, attrs) ->
         KEY_ENTER   = 13
         KEY_UP      = 38
