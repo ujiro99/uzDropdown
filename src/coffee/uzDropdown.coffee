@@ -1,5 +1,6 @@
 angular.module('uz', [])
   .directive 'uzDropdown', ($timeout) ->
+
     return {
       restrict: 'E'
       template:
@@ -18,43 +19,76 @@ angular.module('uz', [])
       scope:
         items: '='
         selected: '='
-        itemFilter: '=filter'
       link: (scope, element, attrs) ->
         KEY_ENTER   = 13
         KEY_UP      = 38
         KEY_DOWN    = 40
+        SPLIT_SPACE = ' '
 
-        selectIndex = 0
-        inputElem = element[0].querySelector(".dropdown-toggle")
+        # focus positon on dropdown contents.
+        _selectIndex = 0
 
-        scope.format = attrs.format or "item.text"
+        # regex object cache for search
+        _searchRegex = {}
+
+        # escape Regex special characters.
+        escapeRegExp = (str) ->
+          return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+
         scope.keyword = ''
         scope.result = []
+        scope.format = attrs.format or "item.text"
         scope.selectedFormat = attrs.selectedFormat or "selected[0].text"
 
+        ###
+         filtering list
+        ###
         scope.itemFilter = (item) ->
-          return eval(scope.format).match(scope.keyword)
+          # create regex object and cache it.
+          if not _searchRegex[scope.keyword]
+            _searchRegex = {}   # clear old regex objects.
+            _searchRegex[scope.keyword] = []
+            keywords = scope.keyword.split(SPLIT_SPACE)
+            for k in keywords
+              _searchRegex[scope.keyword].push new RegExp(escapeRegExp(k), ["i"])
 
+          # filtering.
+          target = eval(scope.format)
+          isMatch = true
+          for reg in _searchRegex[scope.keyword]
+            isMatch &= reg.test(target)
+          return isMatch
+
+        ###
+         onClick contents, select item and update input field.
+        ###
         scope.onClickItem = (item) ->
           scope.selected[0] = item
           scope.keyword = eval("scope." + scope.selectedFormat)
 
+        ###
+         Keydown event on input fileld.
+          - select item (up and down).
+          - confirm item selection (enter).
+        ###
         scope.onKeydown = (keycode) ->
           if keycode is KEY_ENTER
             scope.keyword = eval("scope." + scope.selectedFormat)
-            selected = scope.result[selectIndex]
-          else if keycode is KEY_DOWN then selectIndex++
-          else if keycode is KEY_UP then selectIndex--
+            tmpSelected = scope.result[_selectIndex]
+          else if keycode is KEY_DOWN then _selectIndex++
+          else if keycode is KEY_UP then _selectIndex--
 
-          if selectIndex < 0
-            selectIndex = 0
-          if selectIndex >= scope.result.length
-            selectIndex = scope.result.length - 1
-          selected = scope.result[selectIndex]
-          $timeout(() -> scope.selected[0] = selected)
+          if _selectIndex < 0
+            _selectIndex = 0
+          if _selectIndex >= scope.result.length
+            _selectIndex = scope.result.length - 1
+          tmpSelected = scope.result[_selectIndex]
+          $timeout(() -> scope.selected[0] = tmpSelected)
 
+        ###
+         Update selection if result changed.
+        ###
         scope.$watch 'result.length', () ->
-          selectIndex = 0
-          selected = scope.result[selectIndex]
-          $timeout(() -> scope.selected[0] = selected)
+          _selectIndex = 0
+          $timeout(() -> scope.selected[0] = scope.result[_selectIndex])
     }
