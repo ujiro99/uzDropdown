@@ -10,26 +10,36 @@ angular.module('uz', [])
                "class='dropdown-text dropdown-toggle'" +
                "ng-model='keyword'" +
                "placeholder='{{placeholder}}'" +
+               "ng-blur='onBlur()'" +
                "ng-keydown='onKeydown($event.keyCode)'></input>" +
         "<div class='dropdown-box'><ul class='dropdown-content'>" +
         "<li ng-repeat='item in result = itemFilter(items)'" +
             "ng-click='onClickItem(item)'" +
             "ng-class='{active: item === selected[0]}'>" +
-        "<a><span>{{$format(format, item)}}</span></a>" +
-        "</li></ul></div>"
+        "<a><span>{{$format(format, item)}}</span></a></li>" +
+        "<li ng-if='result.length == 0'><a><span>not found ...</span></a></li>" +
+        "<li ng-if='result.length >= listMax' ng-mouseover='onMouseover()'>" +
+        "<a><span>more ...</span></a></li>" +
+        "</ul></div>"
       scope:
         items: '='
         selected: '='
         placeholder: '@'
       link: (scope, element, attrs) ->
-        KEY_ENTER   = 13
-        KEY_UP      = 38
-        KEY_DOWN    = 40
-        SPLIT_SPACE = ' '
-        DEFAULT_FORMAT = '{0}'
+        KEY_ENTER        = 13
+        KEY_UP           = 38
+        KEY_DOWN         = 40
+        LIST_MAX_INITIAL = 100
+        SPLIT_SPACE      = ' '
+        DEFAULT_FORMAT   = '{0}'
 
         # focus positon on dropdown contents.
         _selectIndex = 0
+
+        scope.keyword = ''
+        scope.result = []
+        scope.format = attrs.format or DEFAULT_FORMAT
+        scope.listMax = LIST_MAX_INITIAL
 
         # escape Regex special characters.
         escapeRegExp = (str) ->
@@ -49,15 +59,13 @@ angular.module('uz', [])
             rep_fn = (m, k) -> return args[parseInt(k) + 1]
           return fmtStr.replace(/\{(.+?)\}/g, rep_fn)
 
-        scope.keyword = ''
-        scope.result = []
-        scope.format = attrs.format or DEFAULT_FORMAT
-
         ###
          filtering list.
         ###
         scope.itemFilter = (items) ->
-          if not scope.keyword then return items
+          if not scope.keyword
+            end = if items.length < scope.listMax then items.length else scope.listMax
+            return items.slice(0, end)
 
           # make regexp object for filtering
           regs = []
@@ -71,22 +79,29 @@ angular.module('uz', [])
             target = scope.$format(scope.format, item)
             isMatch = true
             for reg in regs then isMatch &= reg.test(target)
-            filteredItems.push item if isMatch
+            if isMatch and filteredItems.length < scope.listMax
+              filteredItems.push item
 
           return filteredItems
 
         ###
-         on focus input, select all words.
+         on focus to input, select all words.
         ###
         element[0].querySelector('input').onfocus = () ->
           this.select()
+
+        ###
+         on blur from input, reset state.
+        ###
+        scope.onBlur = () ->
+          scope.listMax = LIST_MAX_INITIAL
 
         ###
          on click contents, select item and update input field.
         ###
         scope.onClickItem = (item) ->
           scope.selected[0] = item
-          scope.keyword = scope.$format(scope.format , item)
+          scope.keyword = scope.$format(scope.format, item)
 
         ###
          Keydown event on input fileld.
@@ -96,7 +111,7 @@ angular.module('uz', [])
         scope.onKeydown = (keycode) ->
           if keycode is KEY_ENTER
             tmpSelected = scope.result[_selectIndex]
-            scope.keyword = scope.$format(scope.format , tmpSelected) if tmpSelected
+            scope.keyword = scope.$format(scope.format, tmpSelected) if tmpSelected
           else if keycode is KEY_DOWN then _selectIndex++
           else if keycode is KEY_UP then _selectIndex--
           if _selectIndex < 0
@@ -105,6 +120,12 @@ angular.module('uz', [])
             _selectIndex = scope.result.length - 1
           tmpSelected = scope.result[_selectIndex]
           scope.selected[0] = tmpSelected
+
+        ###
+         on mouseover last item, load more items.
+        ###
+        scope.onMouseover = () ->
+          scope.listMax += 100
 
         ###
          Update selection if result changed.
