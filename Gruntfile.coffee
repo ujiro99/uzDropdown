@@ -136,7 +136,6 @@ module.exports = (grunt) ->
     'stylus:develop']
 
   grunt.registerTask 'production', [
-    'clean',
     'bower:install',
     'coffee:production',
     'stylus:production',
