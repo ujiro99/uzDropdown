@@ -1,10 +1,11 @@
 angular.module('uz', []).directive('uzDropdown', function($timeout) {
   return {
     restrict: 'E',
-    template: "<div class='dropdown'>" + "<input tabindex='0'" + "class='dropdown-text dropdown-toggle'" + "ng-model='keyword'" + "ng-keydown='onKeydown($event.keyCode)'></input>" + "<div class='dropdown-box'><ul class='dropdown-content'>" + "<li ng-repeat='item in result = (items | filter:itemFilter)'" + "ng-click='onClickItem(item)'" + "ng-class='{active: item === selected[0]}'>" + "<a><span>{{$eval($parent.format)}}</span></a>" + "</li></ul></div>",
+    template: "<div class='dropdown'>" + "<input tabindex='0'" + "class='dropdown-text dropdown-toggle'" + "ng-model='keyword'" + "placeholder='{{placeholder}}'" + "ng-keydown='onKeydown($event.keyCode)'></input>" + "<div class='dropdown-box'><ul class='dropdown-content'>" + "<li ng-repeat='item in result = (items | filter:itemFilter)'" + "ng-click='onClickItem(item)'" + "ng-class='{active: item === selected[0]}'>" + "<a><span>{{$eval($parent.format)}}</span></a>" + "</li></ul></div>",
     scope: {
       items: '=',
-      selected: '='
+      selected: '=',
+      placeholder: '@'
     },
     link: function(scope, element, attrs) {
       var KEY_DOWN, KEY_ENTER, KEY_UP, SPLIT_SPACE, escapeRegExp, _searchRegex, _selectIndex;
@@ -46,7 +47,14 @@ angular.module('uz', []).directive('uzDropdown', function($timeout) {
         return isMatch;
       };
       /*
-       onClick contents, select item and update input field.
+       on focus input, select all words.
+      */
+
+      element[0].querySelector('input').onfocus = function() {
+        return this.select();
+      };
+      /*
+       on click contents, select item and update input field.
       */
 
       scope.onClickItem = function(item) {
