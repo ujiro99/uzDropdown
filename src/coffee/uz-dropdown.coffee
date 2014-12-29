@@ -1,5 +1,5 @@
 angular.module('uz', [])
-  .directive 'uzDropdown', ($timeout) ->
+  .directive 'uzDropdown', () ->
 
     return {
       restrict: 'E'
@@ -12,10 +12,10 @@ angular.module('uz', [])
                "placeholder='{{placeholder}}'" +
                "ng-keydown='onKeydown($event.keyCode)'></input>" +
         "<div class='dropdown-box'><ul class='dropdown-content'>" +
-        "<li ng-repeat='item in result = (items | filter:itemFilter)'" +
+        "<li ng-repeat='item in result = itemFilter(items)'" +
             "ng-click='onClickItem(item)'" +
             "ng-class='{active: item === selected[0]}'>" +
-        "<a><span>{{$eval($parent.format)}}</span></a>" +
+        "<a><span>{{$format(format, item)}}</span></a>" +
         "</li></ul></div>"
       scope:
         items: '='
@@ -26,40 +26,54 @@ angular.module('uz', [])
         KEY_UP      = 38
         KEY_DOWN    = 40
         SPLIT_SPACE = ' '
+        DEFAULT_FORMAT = '{0}'
 
         # focus positon on dropdown contents.
         _selectIndex = 0
-
-        # regex object cache for search
-        _searchRegex = {}
 
         # escape Regex special characters.
         escapeRegExp = (str) ->
           return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
 
+        # format string
+        scope.$format = (fmtStr, obj) ->
+          rep_fn = undefined
+          if typeof obj == "object"
+            rep_fn = (m, k) ->
+              keys = k.split('.')
+              tmp = obj
+              for key in keys then tmp = tmp[key]
+              return tmp
+          else
+            args = arguments
+            rep_fn = (m, k) -> return args[parseInt(k) + 1]
+          return fmtStr.replace(/\{(.+?)\}/g, rep_fn)
+
         scope.keyword = ''
         scope.result = []
-        scope.format = attrs.format or "item.text"
-        scope.selectedFormat = attrs.selectedFormat or "selected[0].text"
+        scope.format = attrs.format or DEFAULT_FORMAT
 
         ###
-         filtering list
+         filtering list.
         ###
-        scope.itemFilter = (item) ->
-          # create regex object and cache it.
-          if not _searchRegex[scope.keyword]
-            _searchRegex = {}   # clear old regex objects.
-            _searchRegex[scope.keyword] = []
-            keywords = scope.keyword.split(SPLIT_SPACE)
-            for k in keywords
-              _searchRegex[scope.keyword].push new RegExp(escapeRegExp(k), ["i"])
+        scope.itemFilter = (items) ->
+          if not scope.keyword then return items
+
+          # make regexp object for filtering
+          regs = []
+          keywords = scope.keyword.split(SPLIT_SPACE)
+          for k in keywords
+            regs.push(new RegExp(escapeRegExp(k), ["i"]))
 
           # filtering.
-          target = eval(scope.format)
-          isMatch = true
-          for reg in _searchRegex[scope.keyword]
-            isMatch &= reg.test(target)
-          return isMatch
+          filteredItems = []
+          for item, i in items
+            target = scope.$format(scope.format, item)
+            isMatch = true
+            for reg in regs then isMatch &= reg.test(target)
+            filteredItems.push item if isMatch
+
+          return filteredItems
 
         ###
          on focus input, select all words.
@@ -72,7 +86,7 @@ angular.module('uz', [])
         ###
         scope.onClickItem = (item) ->
           scope.selected[0] = item
-          scope.keyword = eval("scope." + scope.selectedFormat)
+          scope.keyword = scope.$format(scope.format , item)
 
         ###
          Keydown event on input fileld.
@@ -81,22 +95,21 @@ angular.module('uz', [])
         ###
         scope.onKeydown = (keycode) ->
           if keycode is KEY_ENTER
-            scope.keyword = eval("scope." + scope.selectedFormat)
             tmpSelected = scope.result[_selectIndex]
+            scope.keyword = scope.$format(scope.format , tmpSelected) if tmpSelected
           else if keycode is KEY_DOWN then _selectIndex++
           else if keycode is KEY_UP then _selectIndex--
-
           if _selectIndex < 0
             _selectIndex = 0
           if _selectIndex >= scope.result.length
             _selectIndex = scope.result.length - 1
           tmpSelected = scope.result[_selectIndex]
-          $timeout(() -> scope.selected[0] = tmpSelected)
+          scope.selected[0] = tmpSelected
 
         ###
          Update selection if result changed.
         ###
         scope.$watch 'result.length', () ->
           _selectIndex = 0
-          $timeout(() -> scope.selected[0] = scope.result[_selectIndex])
+          scope.selected[0] = scope.result[_selectIndex]
     }
