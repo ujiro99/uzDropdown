@@ -62,7 +62,13 @@ angular.module('uz', [])
           return isMatch
 
         ###
-         onClick contents, select item and update input field.
+         on focus input, select all words.
+        ###
+        element[0].querySelector('input').onfocus = () ->
+          this.select()
+
+        ###
+         on click contents, select item and update input field.
         ###
         scope.onClickItem = (item) ->
           scope.selected[0] = item
