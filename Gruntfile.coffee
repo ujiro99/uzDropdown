@@ -7,7 +7,7 @@ module.exports = (grunt) ->
   config =
     src: 'src',
     dist: 'dist'
-    mainfile: 'uzDropdown.js'
+    mainfile: 'uz-dropdown.js'
 
   # configure
   grunt.initConfig
@@ -56,8 +56,7 @@ module.exports = (grunt) ->
           join: true
         files: [
           '<%= config.dist %>/scripts/<%= config.mainfile %>': [
-            '<%= config.src %>/coffee/*.coffee',
-            '!<%= config.src %>/coffee/chromereload.coffee'
+            '<%= config.src %>/coffee/*.coffee'
           ]
         ]
       develop:
@@ -104,8 +103,15 @@ module.exports = (grunt) ->
     uglify:
       production:
         src:  '<%= config.dist %>/scripts/<%= config.mainfile %>'
-        dest: '<%= config.dist %>/scripts/<%= config.mainfile %>'
+        dest: '<%= config.dist %>/scripts/uz-dropdown.min.js'
 
+     cssmin:
+      minify:
+        expand: true
+        src:  '*.css'
+        cwd:  '<%= config.dist %>/css/'
+        dest: '<%= config.dist %>/css/'
+        ext:  '.min.css'
 
     # Empties folders to start fresh
     clean:
@@ -121,7 +127,7 @@ module.exports = (grunt) ->
 
   # tasks
   grunt.registerTask 'watch', ['esteWatch']
-  grunt.registerTask 'minify', ['ngmin', 'uglify']
+  grunt.registerTask 'minify', ['ngmin', 'uglify', 'cssmin']
   grunt.registerTask 'test', ['exec:test']
 
   grunt.registerTask 'dev', [

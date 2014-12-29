@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <title>Dropdown Tests</title>
-  <link rel="stylesheet" href="./dist/css/uz-dropdown.css">
+  <link rel="stylesheet" href="./dist/css/uz-dropdown.min.css">
 
   <script src="http://localhost:35729/livereload.js"></script>
   <script src="../angular/angular.min.js"></script>
-  <script src="./dist/scripts/uz-dropdown.js"></script>
+  <script src="./dist/scripts/uz-dropdown.min.js"></script>
 
   <style>
     table {
@@ -41,7 +41,7 @@
     angular
       .module('myApp', ['uz'])
       .controller("MainCtrl", function($scope) {
-        $scope.items = ["one", "two", "three", "four", "\\test", "//test", "[]\\¥/ ,+\";^-()|" ];
+        $scope.items = ["one", "two", "three", "four", "\\test", "//test", "[]\\促/ ,+\";^-()|" ];
         $scope.selected = [];
       });
   </script>
