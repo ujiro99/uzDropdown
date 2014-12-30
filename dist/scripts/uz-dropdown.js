@@ -52,6 +52,9 @@ angular.module('uz', []).directive('uzDropdown', function () {
       */
       scope.itemFilter = function (items) {
         var end, filteredItems, i, isMatch, item, k, keywords, reg, regs, target, _i, _j, _k, _len, _len1, _len2;
+        if (items == null || items.length === 0) {
+          return [];
+        }
         if (!scope.keyword) {
           end = items.length < scope.listMax ? items.length : scope.listMax;
           return items.slice(0, end);

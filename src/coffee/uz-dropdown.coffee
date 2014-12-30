@@ -66,6 +66,7 @@ angular.module('uz', [])
          filtering list.
         ###
         scope.itemFilter = (items) ->
+          return [] if not items? or items.length is 0
           if not scope.keyword
             end = if items.length < scope.listMax then items.length else scope.listMax
             return items.slice(0, end)
