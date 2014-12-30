@@ -36,10 +36,13 @@ angular.module('uz', [])
         # focus positon on dropdown contents.
         _selectIndex = 0
 
-        scope.keyword = ''
-        scope.result = []
-        scope.format = attrs.format or DEFAULT_FORMAT
-        scope.listMax = LIST_MAX_INITIAL
+        # initialize.
+        scope.items    = scope.items or []
+        scope.selected = scope.selected or []
+        scope.keyword  = ''
+        scope.result   = []
+        scope.format   = attrs.format or DEFAULT_FORMAT
+        scope.listMax  = LIST_MAX_INITIAL
 
         # escape Regex special characters.
         escapeRegExp = (str) ->

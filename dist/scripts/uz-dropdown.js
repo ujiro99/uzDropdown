@@ -16,6 +16,8 @@ angular.module('uz', []).directive('uzDropdown', function () {
       SPLIT_SPACE = ' ';
       DEFAULT_FORMAT = '{0}';
       _selectIndex = 0;
+      scope.items = scope.items || [];
+      scope.selected = scope.selected || [];
       scope.keyword = '';
       scope.result = [];
       scope.format = attrs.format || DEFAULT_FORMAT;
