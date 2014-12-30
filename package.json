@@ -1,6 +1,6 @@
 {
   "name": "uzDropdown",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "simple dropdown menu as a angularjs directive.",
   "main": "dist/scripts/uz-dropdown.min.js",
   "devDependencies": {
