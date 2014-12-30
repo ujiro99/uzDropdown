@@ -53,9 +53,15 @@ Attribute | Options       | Default                    | Description
 ---       | ---           | ---                        | ---
 `items`   | *Array of Object*| -                       | dropdown's list data.
 `selected`|*Array of Object*|-| selected object on dropdown.
-`format`  |*string*|`item.text`| In dropdown, objects will be shown using `$eval` to this value.
-`selected-format`  |*string*|`selected[0].text`| In input area, objects will be shown using `$eval` to this value.
+`format`  |*string*|`{0}`| In dropdown, objects will be shown using this value. (*1)
 `placeholder`    | *string*      | -   | placeholder on input area.
+
+### *1 format
+Type of Item | Format | Example
+---  | ---     | ---
+Array| `{0}, {1}, ... {n}` | `"No.{0} {1}"`, `"No.{0} {1} ${2}"`
+Object| `{key_1}, ... {key_n}` | `"No.{id} {name} ${price}"`
+Object in Object| `{key_1.key_2}, ...` | `"No.{id} {param.name} ${param.price}"`
 
 
 ## Development
