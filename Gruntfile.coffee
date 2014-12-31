@@ -125,10 +125,7 @@ module.exports = (grunt) ->
 
     # Empties folders to start fresh
     clean:
-      dist:
-        files: [
-          dot: true
-          src: ["<%= config.dist %>/*"]
+      ['dist/css', 'dist/scripts']
 
     usebanner:
       options:
@@ -155,6 +152,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'production', [
     'bower:install',
+    'clean',
     'coffee:production',
     'stylus:production',
     'minify',
