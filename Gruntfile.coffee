@@ -3,11 +3,19 @@ module.exports = (grunt) ->
   # Load plugins automatically
   require("load-grunt-tasks") grunt
 
+
   # set variables
   config =
     src: 'src',
     dist: 'dist'
     mainfile: 'uz-dropdown.js'
+    bower: grunt.file.readJSON("./bower.json")
+    banner : '/**!\n' +
+             '  uz-dropdown <%= config.bower.version %>\n' +
+             '  <%= config.bower.homepage %>\n' +
+             '  License: <%= config.bower.license %>\n\n' +
+             '  Copyright (C) 2014 <%= config.bower.authors[0] %>\n*/'
+
 
   # configure
   grunt.initConfig
@@ -78,6 +86,8 @@ module.exports = (grunt) ->
           ext:  '.css'
         ]
       develop:
+        options:
+          compress: false
         files: [
           expand: true
           src:  ['**/*.styl']
@@ -119,6 +129,14 @@ module.exports = (grunt) ->
         files: [
           dot: true
           src: ["<%= config.dist %>/*"]
+
+    usebanner:
+      options:
+        banner: config.banner
+      files:
+        src: [
+          'dist/css/uz-dropdown.*css',
+          'dist/scripts/uz-dropdown.*js'
         ]
 
     # Excec test.
@@ -139,5 +157,6 @@ module.exports = (grunt) ->
     'bower:install',
     'coffee:production',
     'stylus:production',
-    'minify'
+    'minify',
+    'usebanner'
   ]

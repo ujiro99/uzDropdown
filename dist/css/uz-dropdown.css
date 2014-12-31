@@ -1,3 +1,10 @@
+/**!
+  uz-dropdown 0.4.2
+  https://github.com/ujiro99/uzDropdown
+  License: MIT
+
+  Copyright (C) 2014 ujiro99
+*/
 @import "fontello.css";
 .dropdown{position:relative;display:inline-block;text-align:left;width:100%;height:28px;vertical-align:middle;}
 .dropdown:after{content:'\e803';font-family:'fontello';font-size:.9em;opacity:.3;position:absolute;top:6px;right:6px;transition:opacity .2s ease-out}

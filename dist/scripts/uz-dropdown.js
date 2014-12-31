@@ -1,3 +1,10 @@
+/**!
+  uz-dropdown 0.4.2
+  https://github.com/ujiro99/uzDropdown
+  License: MIT
+
+  Copyright (C) 2014 ujiro99
+*/
 angular.module('uz', []).directive('uzDropdown', function () {
   return {
     restrict: 'E',
