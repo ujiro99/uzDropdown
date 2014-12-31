@@ -129,6 +129,7 @@ module.exports = (grunt) ->
     clean:
       ['dist/css', 'dist/scripts']
 
+    # add license to files.
     usebanner:
       options:
         banner: config.banner
@@ -138,6 +139,18 @@ module.exports = (grunt) ->
           'dist/scripts/uz-dropdown.*js'
         ]
 
+    # update version
+    release:
+      options:
+        file: 'package.json'
+        additionalFiles: ['bower.json']
+        tag: false
+        add: false
+        push: false
+        pushTags: false
+        commit: false
+        npm: false
+
     # Excec test.
     exec:
       test: "open ./demo.html"
@@ -146,6 +159,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'watch', ['esteWatch']
   grunt.registerTask 'minify', ['ngmin', 'uglify', 'cssmin']
   grunt.registerTask 'test', ['exec:test']
+  grunt.registerTask 'version', ['release']
 
   grunt.registerTask 'dev', [
     'bower:install',
