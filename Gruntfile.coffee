@@ -78,6 +78,8 @@ module.exports = (grunt) ->
 
     stylus:
       production:
+        options:
+          compress: false
         files: [
           expand: true
           src:  ['**/*.styl']
