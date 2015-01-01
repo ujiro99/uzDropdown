@@ -51,6 +51,7 @@
         // basic
         $scope.items = ["one", "two", "three", "four", "\\test", "//test", "[]\\促/ ,+\";^-()|" ];
         $scope.selected = [];
+        $scope.keyword=''
 
         // object
         $scope.items_obj = [
@@ -106,6 +107,7 @@
         items='items'
         selected='selected'
         format=''
+        keyword='keyword'
         placeholder='input keyword ...'>
       </uz-dropdown>
     </section>
@@ -131,6 +133,7 @@
         items='items_obj'
         selected='selected_obj'
         format='{id} {name}'
+        keyword='keyword'
         placeholder='input keyword ...'>
       </uz-dropdown>
     </section>
@@ -156,6 +159,7 @@
         items='items_obj_obj'
         selected='selected_obj_obj'
         format='{id} {param.name} {param.val}'
+        keyword='keyword'
         placeholder='input keyword ...'>
       </uz-dropdown>
     </section>
@@ -181,6 +185,7 @@
         items='items_1000'
         selected='selected_1000'
         format='{id} {param.name}'
+        keyword='keyword'
         placeholder='input keyword ...'>
       </uz-dropdown>
     </section>

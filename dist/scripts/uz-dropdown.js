@@ -12,6 +12,7 @@ angular.module('uz', []).directive('uzDropdown', function () {
     scope: {
       items: '=',
       selected: '=',
+      keyword: '=',
       placeholder: '@'
     },
     link: function (scope, element, attrs) {
@@ -25,7 +26,6 @@ angular.module('uz', []).directive('uzDropdown', function () {
       _selectIndex = 0;
       scope.items = scope.items || [];
       scope.selected = scope.selected || [];
-      scope.keyword = '';
       scope.result = [];
       scope.format = attrs.format || DEFAULT_FORMAT;
       scope.listMax = LIST_MAX_INITIAL;

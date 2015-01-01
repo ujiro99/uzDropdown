@@ -24,6 +24,7 @@ angular.module('uz', [])
       scope:
         items: '='
         selected: '='
+        keyword: '='
         placeholder: '@'
       link: (scope, element, attrs) ->
         KEY_ENTER        = 13
@@ -39,7 +40,6 @@ angular.module('uz', [])
         # initialize.
         scope.items    = scope.items or []
         scope.selected = scope.selected or []
-        scope.keyword  = ''
         scope.result   = []
         scope.format   = attrs.format or DEFAULT_FORMAT
         scope.listMax  = LIST_MAX_INITIAL
