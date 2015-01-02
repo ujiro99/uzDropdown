@@ -2,7 +2,7 @@
 
 height = 28
 max_height = 250
-hover_color = #f7505a
+focused_color  = #ff8c92
 selected_color = #f7505a
 
 .dropdown
@@ -98,29 +98,38 @@ selected_color = #f7505a
     overflow: hidden
     transition: .25s ease
     padding-right: 5px
+
     &:hover
-      background: hover_color
+      background: focused_color
       padding-left: 5px
       a
-        text-decoration: none
         color: snow
 
-  li.active
-    background: selected_color
-    padding-left: 5px
-    a
-      text-decoration: none
-      color: snow
+    &.focused
+      background: focused_color
+      padding-left: 5px
+      a
+        color: snow
 
-  li:first-child
-    padding-top: 5px
-    border-radius: .3125em .3125em 0 0 !important
+    &.selected
+      background: selected_color
+      a
+        color: snow
 
-  li:last-child
-    padding-bottom: 5px
-    border-radius: 0 0 .3125em .3125em !important
+    &:first-child
+      padding-top: 5px
+      border-radius: .3125em .3125em 0 0 !important
+
+    &:last-child
+      padding-bottom: 5px
+      border-radius: 0 0 .3125em .3125em !important
+
+    &:first-child:last-child
+      padding: 4px 0
+      border-radius: .3125em .3125em .3125em .3125em !important
 
   a
+    text-decoration: none
     display: block
 
 .dropdown-toggle:hover

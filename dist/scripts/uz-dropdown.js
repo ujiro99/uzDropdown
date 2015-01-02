@@ -8,7 +8,7 @@
 angular.module('uz', []).directive('uzDropdown', function () {
   return {
     restrict: 'E',
-    template: '<div class=\'dropdown\'>' + '<input tabindex=\'0\'' + 'class=\'dropdown-text dropdown-toggle\'' + 'ng-model=\'keyword\'' + 'placeholder=\'{{placeholder}}\'' + 'ng-blur=\'onBlur()\'' + 'ng-keydown=\'onKeydown($event.keyCode)\'></input>' + '<div class=\'dropdown-box\'><ul class=\'dropdown-content\'>' + '<li ng-repeat=\'item in result = itemFilter(items) | orderBy:order\'' + 'ng-click=\'onClickItem(item)\'' + 'ng-class=\'{active: item === selected[0]}\'>' + '<a><span>{{$format(format, item)}}</span></a></li>' + '<li ng-if=\'result.length == 0\'><a><span>not found ...</span></a></li>' + '<li ng-if=\'result.length >= listMax\' ng-mouseover=\'onMouseover()\'>' + '<a><span>more ...</span></a></li>' + '</ul></div>',
+    template: '<div class=\'dropdown\'>' + '<input tabindex=\'0\'' + 'class=\'dropdown-text dropdown-toggle\'' + 'ng-model=\'keyword\'' + 'placeholder=\'{{placeholder}}\'' + 'ng-blur=\'onBlur()\'' + 'ng-keydown=\'onKeydown($event.keyCode)\'></input>' + '<div class=\'dropdown-box\'><ul class=\'dropdown-content\'>' + '<li ng-repeat=\'item in result = (itemFilter(items) | orderBy:order)\'' + 'ng-click=\'onClickItem(item)\'' + 'ng-mouseover=\'onMouseoverItem($index)\'' + 'ng-class=\'{selected: item === selected[0], focused: $index === focusIndex}\'>' + '<a><span>{{$format(format, item)}}</span></a></li>' + '<li ng-if=\'result.length == 0\'><a><span>not found ...</span></a></li>' + '<li ng-if=\'result.length >= listMax\' ng-mouseover=\'onMouseover()\'>' + '<a><span>more ...</span></a></li>' + '</ul></div>',
     scope: {
       items: '=',
       selected: '=',
@@ -16,23 +16,29 @@ angular.module('uz', []).directive('uzDropdown', function () {
       placeholder: '@'
     },
     link: function (scope, element, attrs) {
-      var DEFAULT_FORMAT, KEY_DOWN, KEY_ENTER, KEY_UP, LIST_MAX_INITIAL, SPLIT_SPACE, escapeRegExp, _selectIndex;
+      var DEFAULT_FORMAT, KEY_DOWN, KEY_ENTER, KEY_UP, LIST_MAX_INITIAL, SPLIT_SPACE, confirm, escapeRegExp;
       KEY_ENTER = 13;
       KEY_UP = 38;
       KEY_DOWN = 40;
       LIST_MAX_INITIAL = 100;
       SPLIT_SPACE = ' ';
       DEFAULT_FORMAT = '{0}';
-      _selectIndex = 0;
       scope.items = scope.items || [];
       scope.selected = scope.selected || [];
       scope.result = [];
       scope.format = attrs.format || DEFAULT_FORMAT;
       scope.order = attrs.orderby || '';
       scope.listMax = LIST_MAX_INITIAL;
+      scope.focusIndex = 0;
+      /*
+       escape Regex special characters.
+      */
       escapeRegExp = function (str) {
         return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
       };
+      /*
+       format string
+      */
       scope.$format = function (fmtStr, obj) {
         var args, rep_fn;
         rep_fn = void 0;
@@ -98,6 +104,9 @@ angular.module('uz', []).directive('uzDropdown', function () {
        on blur from input, reset state.
       */
       scope.onBlur = function () {
+        if (!scope.keyword) {
+          scope.selected[0] = void 0;
+        }
         return scope.listMax = LIST_MAX_INITIAL;
       };
       /*
@@ -109,28 +118,33 @@ angular.module('uz', []).directive('uzDropdown', function () {
       };
       /*
        Keydown event on input fileld.
-        - select item (up and down).
+        - move focus on items (up and down).
         - confirm item selection (enter).
       */
       scope.onKeydown = function (keycode) {
-        var tmpSelected;
         if (keycode === KEY_ENTER) {
-          tmpSelected = scope.result[_selectIndex];
-          if (tmpSelected) {
-            scope.keyword = scope.$format(scope.format, tmpSelected);
-          }
+          confirm();
         } else if (keycode === KEY_DOWN) {
-          _selectIndex++;
+          scope.focusIndex++;
         } else if (keycode === KEY_UP) {
-          _selectIndex--;
+          scope.focusIndex--;
         }
-        if (_selectIndex < 0) {
-          _selectIndex = 0;
+        if (scope.focusIndex < 0) {
+          scope.focusIndex = 0;
         }
-        if (_selectIndex >= scope.result.length) {
-          _selectIndex = scope.result.length - 1;
+        if (scope.focusIndex >= scope.result.length) {
+          return scope.focusIndex = scope.result.length - 1;
         }
-        tmpSelected = scope.result[_selectIndex];
+      };
+      /*
+       confirm selection by focused item.
+      */
+      confirm = function () {
+        var tmpSelected;
+        tmpSelected = scope.result[scope.focusIndex];
+        if (tmpSelected) {
+          scope.keyword = scope.$format(scope.format, tmpSelected);
+        }
         return scope.selected[0] = tmpSelected;
       };
       /*
@@ -140,11 +154,16 @@ angular.module('uz', []).directive('uzDropdown', function () {
         return scope.listMax += 100;
       };
       /*
+       on mouseover last item, update focus index.
+      */
+      scope.onMouseoverItem = function (index) {
+        return scope.focusIndex = index;
+      };
+      /*
        Update selection if result changed.
       */
       return scope.$watch('result.length', function () {
-        _selectIndex = 0;
-        return scope.selected[0] = scope.result[_selectIndex];
+        return scope.focusIndex = 0;
       });
     }
   };

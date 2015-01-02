@@ -4,7 +4,7 @@ angular.module('uz', [])
     return {
       restrict: 'E'
       template:
-        # "result: <pre><code>{{result}}</code></pre>" + # for debug
+#       "result: <pre><code>{{result}}</code></pre>" + # for debug
         "<div class='dropdown'>" +
         "<input tabindex='0'" +
                "class='dropdown-text dropdown-toggle'" +
@@ -15,7 +15,8 @@ angular.module('uz', [])
         "<div class='dropdown-box'><ul class='dropdown-content'>" +
         "<li ng-repeat='item in result = (itemFilter(items) | orderBy:order)'" +
             "ng-click='onClickItem(item)'" +
-            "ng-class='{active: item === selected[0]}'>" +
+            "ng-mouseover='onMouseoverItem($index)'" +
+            "ng-class='{selected: item === selected[0], focused: $index === focusIndex}'>" +
         "<a><span>{{$format(format, item)}}</span></a></li>" +
         "<li ng-if='result.length == 0'><a><span>not found ...</span></a></li>" +
         "<li ng-if='result.length >= listMax' ng-mouseover='onMouseover()'>" +
@@ -34,9 +35,6 @@ angular.module('uz', [])
         SPLIT_SPACE      = ' '
         DEFAULT_FORMAT   = '{0}'
 
-        # focus positon on dropdown contents.
-        _selectIndex = 0
-
         # initialize.
         scope.items    = scope.items or []
         scope.selected = scope.selected or []
@@ -45,11 +43,18 @@ angular.module('uz', [])
         scope.order    = attrs.orderby or ''
         scope.listMax  = LIST_MAX_INITIAL
 
-        # escape Regex special characters.
+        # focus positon on dropdown contents.
+        scope.focusIndex = 0
+
+        ###
+         escape Regex special characters.
+        ###
         escapeRegExp = (str) ->
           return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
 
-        # format string
+        ###
+         format string
+        ###
         scope.$format = (fmtStr, obj) ->
           rep_fn = undefined
           if typeof obj == "object"
@@ -99,6 +104,8 @@ angular.module('uz', [])
          on blur from input, reset state.
         ###
         scope.onBlur = () ->
+          if not scope.keyword
+            scope.selected[0] = undefined
           scope.listMax = LIST_MAX_INITIAL
 
         ###
@@ -110,20 +117,24 @@ angular.module('uz', [])
 
         ###
          Keydown event on input fileld.
-          - select item (up and down).
+          - move focus on items (up and down).
           - confirm item selection (enter).
         ###
         scope.onKeydown = (keycode) ->
-          if keycode is KEY_ENTER
-            tmpSelected = scope.result[_selectIndex]
-            scope.keyword = scope.$format(scope.format, tmpSelected) if tmpSelected
-          else if keycode is KEY_DOWN then _selectIndex++
-          else if keycode is KEY_UP then _selectIndex--
-          if _selectIndex < 0
-            _selectIndex = 0
-          if _selectIndex >= scope.result.length
-            _selectIndex = scope.result.length - 1
-          tmpSelected = scope.result[_selectIndex]
+          if keycode is KEY_ENTER then confirm()
+          else if keycode is KEY_DOWN then scope.focusIndex++
+          else if keycode is KEY_UP then scope.focusIndex--
+          if scope.focusIndex < 0
+            scope.focusIndex = 0
+          if scope.focusIndex >= scope.result.length
+            scope.focusIndex = scope.result.length - 1
+
+        ###
+         confirm selection by focused item.
+        ###
+        confirm = () ->
+          tmpSelected = scope.result[scope.focusIndex]
+          scope.keyword = scope.$format(scope.format, tmpSelected) if tmpSelected
           scope.selected[0] = tmpSelected
 
         ###
@@ -133,9 +144,15 @@ angular.module('uz', [])
           scope.listMax += 100
 
         ###
+         on mouseover last item, update focus index.
+        ###
+        scope.onMouseoverItem = (index) ->
+          scope.focusIndex = index
+
+        ###
          Update selection if result changed.
         ###
         scope.$watch 'result.length', () ->
-          _selectIndex = 0
-          scope.selected[0] = scope.result[_selectIndex]
+          scope.focusIndex = 0
+
     }
