@@ -8,7 +8,7 @@
 angular.module('uz', []).directive('uzDropdown', function () {
   return {
     restrict: 'E',
-    template: '<div class=\'dropdown\'>' + '<input tabindex=\'0\'' + 'class=\'dropdown-text dropdown-toggle\'' + 'ng-model=\'keyword\'' + 'placeholder=\'{{placeholder}}\'' + 'ng-blur=\'onBlur()\'' + 'ng-keydown=\'onKeydown($event.keyCode)\'></input>' + '<div class=\'dropdown-box\'><ul class=\'dropdown-content\'>' + '<li ng-repeat=\'item in result = itemFilter(items)\'' + 'ng-click=\'onClickItem(item)\'' + 'ng-class=\'{active: item === selected[0]}\'>' + '<a><span>{{$format(format, item)}}</span></a></li>' + '<li ng-if=\'result.length == 0\'><a><span>not found ...</span></a></li>' + '<li ng-if=\'result.length >= listMax\' ng-mouseover=\'onMouseover()\'>' + '<a><span>more ...</span></a></li>' + '</ul></div>',
+    template: '<div class=\'dropdown\'>' + '<input tabindex=\'0\'' + 'class=\'dropdown-text dropdown-toggle\'' + 'ng-model=\'keyword\'' + 'placeholder=\'{{placeholder}}\'' + 'ng-blur=\'onBlur()\'' + 'ng-keydown=\'onKeydown($event.keyCode)\'></input>' + '<div class=\'dropdown-box\'><ul class=\'dropdown-content\'>' + '<li ng-repeat=\'item in result = itemFilter(items) | orderBy:order\'' + 'ng-click=\'onClickItem(item)\'' + 'ng-class=\'{active: item === selected[0]}\'>' + '<a><span>{{$format(format, item)}}</span></a></li>' + '<li ng-if=\'result.length == 0\'><a><span>not found ...</span></a></li>' + '<li ng-if=\'result.length >= listMax\' ng-mouseover=\'onMouseover()\'>' + '<a><span>more ...</span></a></li>' + '</ul></div>',
     scope: {
       items: '=',
       selected: '=',
@@ -28,6 +28,7 @@ angular.module('uz', []).directive('uzDropdown', function () {
       scope.selected = scope.selected || [];
       scope.result = [];
       scope.format = attrs.format || DEFAULT_FORMAT;
+      scope.order = attrs.orderby || '';
       scope.listMax = LIST_MAX_INITIAL;
       escapeRegExp = function (str) {
         return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');

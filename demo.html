@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <title>Dropdown Tests</title>
-  <link rel="stylesheet" href="./dist/css/uz-dropdown.min.css">
+  <link rel="stylesheet" href="./dist/css/uz-dropdown.css">
 
   <script src="http://localhost:35729/livereload.js"></script>
   <script src="../angular/angular.min.js"></script>
-  <script src="./dist/scripts/uz-dropdown.min.js"></script>
+  <script src="./dist/scripts/uz-dropdown.js"></script>
 
   <style>
     table {
@@ -55,17 +55,17 @@
 
         // object
         $scope.items_obj = [
-          {id: 1, name: "one"},
-          {id: 2, name: "two"},
-          {id: 3, name: "Three"}
+          {id: 1, name: "b"},
+          {id: 2, name: "c"},
+          {id: 3, name: "a"}
         ];
         $scope.selected_obj = [];
 
         // object in object
         $scope.items_obj_obj = [
-          {id: 1, param: {name: "one",   val: 123}},
-          {id: 2, param: {name: "two",   val: 456}},
-          {id: 3, param: {name: "Three", val: 789}}
+          {id: 1, param: {name: "one",   val: 2}},
+          {id: 2, param: {name: "two",   val: 1}},
+          {id: 3, param: {name: "Three", val: 0}}
         ];
         $scope.selected_obj_obj = [];
 
@@ -134,6 +134,7 @@
         selected='selected_obj'
         format='{id} {name}'
         keyword='keyword'
+        orderBy='name'
         placeholder='input keyword ...'>
       </uz-dropdown>
     </section>
@@ -160,6 +161,7 @@
         selected='selected_obj_obj'
         format='{id} {param.name} {param.val}'
         keyword='keyword'
+        orderBy='param.val'
         placeholder='input keyword ...'>
       </uz-dropdown>
     </section>

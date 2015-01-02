@@ -56,6 +56,7 @@ Attribute | Options       | Default                    | Description
 `selected`|*Array of Object*|-| selected object on dropdown.
 `format`  |*string*|`{0}`| In dropdown, objects will be shown using this value. (*1)
 `keyword` |*string*|``| Search keyword.
+`orderBy` |*string*|``| Order key which is used in item's property name.
 `placeholder`    | *string*      | -   | placeholder on input area.
 
 ### *1 format
