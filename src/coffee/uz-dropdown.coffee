@@ -13,7 +13,7 @@ angular.module('uz', [])
                "ng-blur='onBlur()'" +
                "ng-keydown='onKeydown($event.keyCode)'></input>" +
         "<div class='dropdown-box'><ul class='dropdown-content'>" +
-        "<li ng-repeat='item in result = itemFilter(items) | orderBy:order'" +
+        "<li ng-repeat='item in result = (itemFilter(items) | orderBy:order)'" +
             "ng-click='onClickItem(item)'" +
             "ng-class='{active: item === selected[0]}'>" +
         "<a><span>{{$format(format, item)}}</span></a></li>" +
