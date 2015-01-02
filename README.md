@@ -19,8 +19,8 @@ Or [download as Zip](https://github.com/ujiro99/uzDropdown/archive/master.zip).
   ```html
   <script src="../angular/angular.min.js"></script>
 
-  <link rel="stylesheet" href="./dist/css/dropdown.css">
-  <script src="./dist/scripts/uzDropdown.js"></script>
+  <link rel="stylesheet" href="./dist/css/uz-dropdown.css">
+  <script src="./dist/scripts/uz-dropdown.js"></script>
   ```
 
 2. In javascript, inject module named `uz`, and make list data.
@@ -31,6 +31,7 @@ Or [download as Zip](https://github.com/ujiro99/uzDropdown/archive/master.zip).
       .controller("MainCtrl", function($scope) {
         $scope.items = ["one", "two", "three", "four"];
         $scope.selected = [];
+        $scope.keyword  = "";
     });
   </script>
   ```
@@ -42,7 +43,7 @@ Or [download as Zip](https://github.com/ujiro99/uzDropdown/archive/master.zip).
       items='items'
       selected='selected'
       format='item'
-      selected-format='selected[0]'
+      keyword='keyword'
       placeholder='input keyword ...'>
     </uz-dropdown>
   ```
@@ -54,6 +55,7 @@ Attribute | Options       | Default                    | Description
 `items`   | *Array of Object*| -                       | dropdown's list data.
 `selected`|*Array of Object*|-| selected object on dropdown.
 `format`  |*string*|`{0}`| In dropdown, objects will be shown using this value. (*1)
+`keyword` |*string*|``| Search keyword.
 `placeholder`    | *string*      | -   | placeholder on input area.
 
 ### *1 format
