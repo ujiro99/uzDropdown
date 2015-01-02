@@ -1,5 +1,5 @@
 /**!
-  uz-dropdown 0.4.4
+  uz-dropdown 0.4.5
   https://github.com/ujiro99/uzDropdown
   License: MIT
 
